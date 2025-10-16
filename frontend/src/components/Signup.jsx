@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from "axios";
 import toast from "react-hot-toast";
 
+const BACKEND_URL = "https://chat-application-backend-t5qg.onrender.com";
+
+
 export default function Signup() {
     const [user, setUser] = useState({
         fullName: "",
@@ -51,7 +54,7 @@ export default function Signup() {
         console.log("Signup Data submitted:", user);
 
         try {
-            const res = await axios.post('http://localhost:8080/api/v1/user/register', user, {
+            const res = await axios.post(`${BACKEND_URL}/api/v1/user/register`, user, {
                 headers: {
                     "Content-Type": 'application/json'
                 },

@@ -6,6 +6,8 @@ import toast from 'react-hot-toast'
 import { useDispatch } from "react-redux"
 import { setAuthUser } from '../redux/userSlice';
 
+const BACKEND_URL = "https://chat-application-backend-t5qg.onrender.com";
+
 export default function Login() {
   // Local state to manage form input fields
   const [user, setUser] = useState({
@@ -38,7 +40,7 @@ export default function Login() {
 
     try {
       // Send login request to the backend server
-      const res = await axios.post('http://localhost:8080/api/v1/user/login', user, {
+      const res = await axios.post(`${BACKEND_URL}/api/v1/user/login`, user, {
         headers: {
           "Content-Type": 'application/json'
         },

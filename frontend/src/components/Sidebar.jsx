@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAuthUser, setOtherUsers, setSelectedUser } from '../redux/userSlice';
 import { setMessages } from '../redux/messageSlice';
 
+const BACKEND_URL = "https://chat-application-backend-t5qg.onrender.com";
+
 const Sidebar = () => {
     const [search, setSearch] = useState("");
     const { otherUsers } = useSelector(store => store.user);
@@ -30,7 +32,9 @@ const Sidebar = () => {
     const logoutHandler = async () => {
         try {
             axios.defaults.withCredentials = true;
-            const res = await axios.get('http://localhost:8080/api/v1/user/logout');
+            // USING THE HARDCODED BACKEND_URL
+            const res = await axios.get(`${BACKEND_URL}/api/v1/user/logout`);
+            
             dispatch(setAuthUser(null));
             dispatch(setSelectedUser(null));
             dispatch(setMessages(null));
@@ -38,6 +42,8 @@ const Sidebar = () => {
             toast.success(res.data.message || "Logged out successfully!");
         } catch (error) {
             console.error("Logout Error:", error);
+            // Log the URL attempted to verify
+            console.error("Logout Attempted URL:", `${BACKEND_URL}/api/v1/user/logout`); 
             toast.error("Logout failed. Please check backend or API path.");
         }
     }

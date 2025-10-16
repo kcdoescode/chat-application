@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMessages } from '../redux/messageSlice';
 
+const BACKEND_URL = "https://chat-application-backend-t5qg.onrender.com";
+
 
 const SendInput = () => {
     const [message, setMessage] = useState("");
@@ -18,7 +20,7 @@ const SendInput = () => {
 
         try {
             const res = await axios.post(
-                `http://localhost:8080/api/v1/message/send/${selectedUser._id}`,
+                `${BACKEND_URL}/v1/message/send/${selectedUser._id}`,
                 { message: message },
                 { withCredentials: true }
             );

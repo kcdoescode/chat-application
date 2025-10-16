@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOtherUsers } from '../redux/userSlice';
 
+
+const BACKEND_URL = "https://chat-application-backend-t5qg.onrender.com";
+
 const useGetOtherUsers = () => {
   const dispatch = useDispatch();
   const { authUser } = useSelector(store => store.user);
@@ -13,7 +16,7 @@ const useGetOtherUsers = () => {
         if (!authUser) return;
 
         axios.defaults.withCredentials = true;
-        const res = await axios.get('http://localhost:8080/api/v1/user/');
+        const res = await axios.get(`${BACKEND_URL}/api/v1/user/`);
 
         // ✅ Filter out the logged-in user
         const otherUsers = res.data.filter(u => u._id !== authUser._id);

@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { setMessages } from '../redux/messageSlice';
 
+const BACKEND_URL = "https://chat-application-backend-t5qg.onrender.com";
+
 const useGetMessages = () => {
     const [loading, setLoading] = useState(false); 
     
@@ -21,7 +23,7 @@ const useGetMessages = () => {
         const fetchMessages = async () => {
             setLoading(true); 
             try {
-                const res = await axios.get(`http://localhost:8080/api/v1/message/${selectedUser._id}`, {
+                const res = await axios.get(`${BACKEND_URL}/api/v1/message/${selectedUser._id}`, {
                     withCredentials: true,
                 });
                 

@@ -11,6 +11,9 @@ import { useState } from 'react';
 import { setSocket } from './redux/socketSlice';
 import { setOnlineUsers } from './redux/userSlice';
 
+const BACKEND_URL = "https://chat-application-backend-t5qg.onrender.com";
+
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,7 +36,7 @@ function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
-      const socket = io("http://localhost:8080", {
+      const socket = io(BACKEND_URL, {
         query: { userId: authUser._id }
 
       });
