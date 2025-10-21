@@ -1,6 +1,7 @@
 import { User } from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 export const register = async (req, res) => {
     try {
         const { fullName, username, password, confirmpassword, gender } = req.body;
@@ -38,6 +39,7 @@ export const register = async (req, res) => {
         console.log(error);
     }
 };
+
 export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -62,10 +64,16 @@ export const login = async (req, res) => {
             userId: user._id
         };
 
-
         const token = await jwt.sign(tokenData, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
-        //cybersecurity and passing cookie
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "none" }).json({
+        
+        // --- THIS IS THE FIX ---
+        // Added `secure: true` to the cookie options. This is required when `sameSite` is "none".
+        return res.status(200).cookie("token", token, { 
+            maxAge: 1 * 24 * 60 * 60 * 1000, 
+            httpOnly: true, 
+            sameSite: "None", 
+            secure: true 
+        }).json({
             _id: user.id,
             username: user.username,
             fullName: user.fullName,
@@ -75,6 +83,7 @@ export const login = async (req, res) => {
         console.log(error);
     }
 }
+
 export const logout = (req, res) => {
     try {
         return res.status(200).cookie("token", "", { maxAge: 0 }).json({
@@ -91,6 +100,6 @@ export const getOtherUsers = async (req, res) => {
         return res.status(200).json(OtherUsers);
     } catch (error) {
         console.log(error);
-
     }
 }
+
