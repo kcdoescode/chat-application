@@ -12,25 +12,18 @@ const useGetOtherUsers = () => {
     useEffect(() => {
         const fetchOtherUsers = async () => {
             try {
-                // This check is good, keep it.
                 if (!authUser) return;
 
-                // --- THIS IS THE FIX ---
-                // We will rely ONLY on the HttpOnly cookie that the browser sends automatically.
-                // The manual localStorage and Authorization header logic has been removed.
-
-                axios.defaults.withCredentials = true; // This is the only line you need for auth
+                // Set axios to include credentials with requests globally.
+                axios.defaults.withCredentials = true; 
                 
-                // The axios request no longer needs the manual headers object.
                 const res = await axios.get(`${BACKEND_URL}/api/v1/user/`);
 
-                // This logic is correct, keep it.
                 const otherUsers = res.data.filter(u => u._id !== authUser._id);
                 dispatch(setOtherUsers(otherUsers));
 
             } catch (error) {
                 console.error("Error fetching users:", error);
-                // The error you see in your console will be caught here.
             }
         };
 

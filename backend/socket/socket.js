@@ -9,14 +9,13 @@ const io = new Server(server, {
     cors:{
         origin:['http://localhost:3000'],
         methods:['GET','POST'],
-        // --- THIS IS THE CRITICAL FIX ---
-        // This line tells Socket.io to accept cookies from the browser.
+        // Socket.io accepts cookies from the browser.
         credentials: true
     },
 });
 
 export const getReceiverSocketId = (receiverId) => {
-    return userSocketMap[receiverId]; // Renamed for clarity
+    return userSocketMap[receiverId]; 
 };
 
 const userSocketMap = {}; // Maps userId to socketId
@@ -31,7 +30,6 @@ io.on('connection', (socket) => {
 
     io.emit('getOnlineUsers', Object.keys(userSocketMap));
 
-    // --- SUBTLE BUG FIX in disconnect logic ---
     socket.on('disconnect', () => {
         console.log('User disconnected', socket.id);
         // Find the userId associated with the disconnected socket
