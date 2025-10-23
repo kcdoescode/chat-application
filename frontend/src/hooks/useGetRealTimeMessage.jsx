@@ -14,24 +14,23 @@ const useGetRealTimeMessage = () => {
     const handleNewMessage = (newMessage) => {
       console.log("REAL-TIME MESSAGE RECEIVED:", newMessage);
 
-      // ✅ Only add if message is from or to current user
+      // ✅ Only show messages relevant to the selected chat
       if (
         selectedUser &&
         (newMessage.senderId === selectedUser._id ||
           newMessage.receiverId === selectedUser._id)
       ) {
-        dispatch(setMessages((prev) => [...prev, newMessage]));
+        const safeMessages = Array.isArray(messages) ? messages : [];
+        dispatch(setMessages([...safeMessages, newMessage]));
       }
     };
 
-    // ✅ Attach listener once
     socket.on("newMessage", handleNewMessage);
 
-    // 🧹 Cleanup old listener
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
-  }, [socket, selectedUser, dispatch]); 
+  }, [socket, selectedUser, messages, dispatch]);
 };
 
 export default useGetRealTimeMessage;
