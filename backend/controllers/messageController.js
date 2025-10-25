@@ -2,68 +2,65 @@ import { Conversation } from "../models/conversationModel.js";
 import { Message } from "../models/messageModel.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
 
-// business logic of messages like whatsapp
-export const sendMessage = async (req,res) => {
-    try {
-        const senderId = req.id; 
-        const receiverId = req.params.id;
-        const {message} = req.body;
-        //chatting between whom, conversation participants 
-        let gotConversation = await Conversation.findOne({
-            participants: {$all :[senderId, receiverId]},
-        });
+export const sendMessage = async (req, res) => {
+  try {
+    const senderId = req.id; 
+    const receiverId = req.params.id;
+    const { message } = req.body;
 
-        if(!gotConversation){
-            gotConversation = await Conversation.create({
-                participants:[senderId, receiverId]
-            })
-        };
+    // 🔹 1. Find or create conversation
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+    });
 
-        const newMessage = await Message.create({
-            senderId,
-            receiverId,
-            message
-        });
-        if(newMessage){
-            gotConversation.messages.push(newMessage._id);
-        };
-        await gotConversation.save();
-       
-
-        //SOCKET IO (USED FOR REAL TIME MSSGS, data transfer)
-        const receiverSocketId = getReceiverSocketId(receiverId);
-        if(receiverSocketId){
-            io.to(receiverSocketId).emit("newMessage", newMessage);
-        }
-
-
-
-        return res.status(201).json({
-            newMessage
-        })
-
-    } catch (error) {
-        console.log(error);
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants: [senderId, receiverId],
+      });
     }
-}
 
-export const getMessage = async (req,res) => {
-    try {
-        const receiverId = req.params.id;
-        const senderId = req.id;
-        
-        const conversation = await Conversation.findOne({
-            participants: {$all : [senderId, receiverId]}
-        }).populate("messages");
+    // 🔹 2. Create message
+    const newMessage = await Message.create({
+      senderId,
+      receiverId,
+      message,
+    });
 
-        if (!conversation) {
-            return res.status(200).json([]); 
-        }
+    // 🔹 3. Push new message to conversation and save
+    conversation.messages.push(newMessage._id);
+    await conversation.save();
 
-        return res.status(200).json(conversation.messages); 
-
-    } catch (error) {
-        console.error("CRITICAL BACKEND ERROR in getMessage:", error);
-        return res.status(500).json({ error: "Internal Server Error" }); 
+    // 🔹 4. Send message to receiver via Socket.IO (real-time)
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
     }
-}
+
+    // ✅ Sender gets message instantly via API response (no need to emit)
+    return res.status(201).json({ newMessage });
+  } catch (error) {
+    console.error("❌ Error in sendMessage:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getMessage = async (req, res) => {
+  try {
+    const senderId = req.id;
+    const receiverId = req.params.id;
+
+    // 🔹 5. Find conversation and populate messages
+    const conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+    }).populate("messages");
+
+    if (!conversation) {
+      return res.status(200).json([]);
+    }
+
+    return res.status(200).json(conversation.messages);
+  } catch (error) {
+    console.error("❌ Error in getMessage:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
