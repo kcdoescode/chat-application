@@ -5,6 +5,15 @@ A real-time chat application built with the **MERN stack** and **Socket.IO** fea
 ### 🖥️ Live Preview Link
 https://chat-application-henna-five.vercel.app/
 
+### 🖥️ Screenshots
+<img width="1877" height="908" alt="image" src="https://github.com/user-attachments/assets/e7899c9f-28bc-455b-8f41-a660a8d1e72f" />
+<img width="1882" height="902" alt="image" src="https://github.com/user-attachments/assets/b3c220da-982a-4e0f-b80e-5edb83577c75" />
+<img width="1920" height="910" alt="image" src="https://github.com/user-attachments/assets/bcdd6553-1bca-4de3-94b6-a85d7442b887" />
+
+
+
+
+
 ## 🚀 Features
 - 🔐 JWT Authentication
 - ⚡ Real-time messaging with Socket.IO
